@@ -1,42 +1,30 @@
 package day02
 
 import java.util.Scanner
-import kotlin.math.max
 import lines
 
+private val colors = listOf("red", "green", "blue")
+
 class Day(val input: Scanner) {
-    fun starOne(): Int =
-        parseGamesOne().sum().also(::println)
-
-    fun starTwo(): Int =
-        parseGamesTwo().sum().also(::println)
-
-    private fun parseGamesOne() = input.lines().map { line ->
-        val limits = mapOf("red" to 12, "green" to 13, "blue" to 14)
-
-        line.dropPrefix().split(";").all { game ->
-            game.split(",").all { box ->
-                box.trim().split(" ").let { (num, color) ->
-                    limits[color]!! >= num.toInt()
-                }
-            }
-        }.let { valid -> if (valid) line.id().toInt() else 0 }
-    }
-
-    private fun parseGamesTwo() = input.lines().map { line ->
-        val limits = mutableMapOf("red" to 0, "green" to 0, "blue" to 0)
-
-        line.dropPrefix().split(";").forEach { game ->
-            game.split(",").forEach { box ->
-                box.trim().split(" ").let { (num, color) ->
-                    limits[color] = max(limits[color]!!, num.toInt())
-                }
-            }
+    fun starOne(): Int = input.lines()
+        .map { line ->
+            colors.withIndex()
+                .all { line.maxByColor(it.value) <= arrayOf(12, 13, 14)[it.index] }
+                .let { valid -> if (valid) id(line) else 0 }
         }
+        .sum().also(::println)
 
-        limits.values.fold(1) { acc, it -> acc * it }
-    }
-
-    private fun String.id() = drop(5).takeWhile { it != ':' }
-    private fun String.dropPrefix() = drop(5).dropWhile { it != ':' }.drop(1)
+    fun starTwo(): Int = input.lines()
+        .map { line ->
+            colors
+                .map(line::maxByColor)
+                .reduce(Int::times)
+        }
+        .sum().also(::println)
 }
+
+private fun id(line: String) = line.drop(5).takeWhile { it != ':' }.toInt()
+private fun String.maxByColor(color: String) = Regex("""(\d+) $color""")
+    .findAll(this)
+    .map { it.groupValues.last().toInt() }
+    .maxOrNull() ?: 0
