@@ -4,22 +4,17 @@ import java.util.Scanner
 import lines
 
 class Day(val input: Scanner) {
-    fun starOne(): Int = input.lines()
-        .sumOf { line ->
-            (winsIn(line) - 1).takeIf { it >= 0 }
-                ?.let { 1 shl it } ?: 0
-        }
+    fun starOne(): Int = input.lines().map(::winsIn)
+        .filter { it > 0 }.sumOf { 1 shl (it - 1) }
         .also(::println)
 
-    fun starTwo(): Int = input.lines()
-        .mapIndexed { idx, line -> Card(idx, winsIn(line)) }
+    fun starTwo(): Int = input.lines().map(::winsIn)
         .toList().run {
-            sumOf { (base, wins, amount) ->
-                repeat(wins) {
-                    this[1 + it + base].amount += amount
+            foldIndexed(Array(size) { 1 }) { idx, acc, wins ->
+                acc.apply {
+                    repeat(wins) { acc[1 + it + idx] += acc[idx] }
                 }
-                1 + wins * amount
-            }
+            }.sum()
         }
         .also(::println)
 }
@@ -31,5 +26,3 @@ private fun winsIn(line: String): Int =
     line.split(":").last().split("|")
         .let { (w, c) -> w.toNumbers() intersect c.toNumbers() }
         .size
-
-private data class Card(val index: Int, val wins: Int, var amount: Int = 1)
