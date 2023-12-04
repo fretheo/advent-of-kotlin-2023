@@ -1,22 +1,20 @@
 package day04
 
+import asList
 import java.util.Scanner
-import lines
 
-class Day(val input: Scanner) {
-    fun starOne(): Int = input.lines().map(::winsIn)
+class Day(val input: Scanner) : MutableMap<Int, Int> by mutableMapOf() {
+    fun starOne(): Int = input.asList().map(::winsIn)
         .filter { it > 0 }.sumOf { 1 shl (it - 1) }
         .also(::println)
 
-    fun starTwo(): Int = input.lines().map(::winsIn)
-        .toList().run {
-            foldIndexed(Array(size) { 1 }) { idx, acc, wins ->
-                acc.apply {
-                    repeat(wins) { acc[1 + it + idx] += acc[idx] }
-                }
-            }.sum()
-        }
+    fun starTwo(): Int = input.asList().map(::winsIn)
+        .run { indices.sumOf { cards(it) } }
         .also(::println)
+
+    private fun List<Int>.cards(index: Int): Int = getOrPut(index) {
+        1 + (0..<index).sumOf { if (this[it] < (index - it)) 0 else cards(it) }
+    }
 }
 
 private fun String.toNumbers() =
@@ -24,5 +22,4 @@ private fun String.toNumbers() =
 
 private fun winsIn(line: String): Int =
     line.split(":").last().split("|")
-        .let { (w, c) -> w.toNumbers() intersect c.toNumbers() }
-        .size
+        .let { it[0].toNumbers() intersect it[1].toNumbers() }.size
