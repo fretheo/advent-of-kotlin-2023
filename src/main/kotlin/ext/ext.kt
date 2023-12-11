@@ -30,6 +30,9 @@ operator fun List<MutableList<Char>>.set(x: Int, y: Int, value: Char) {
 val <T> List<List<T>>.xIndices get() = require(isNotEmpty()).let { first().indices }
 val <T> List<List<T>>.yIndices get() = require(isNotEmpty()).let { indices }
 
+val <T> List<List<T>>.X get() = xIndices.last
+val <T> List<List<T>>.Y get() = yIndices.last
+
 inline fun <T> List<List<T>>.gridForEach(action: (x: Int, y: Int, T) -> Unit) {
     for (y in this.indices)
         for (x in this[y].indices)
@@ -48,6 +51,14 @@ val <T> List<List<T>>.gridIndices: List<Pair<Int, Int>>
     get() = this.indices.flatMap { y ->
         this[y].indices.map { x -> x to y }
     }
+
+fun <T> List<List<T>>.positionOfFirst(predicate: (T) -> Boolean): Pair<Int, Int> {
+    for (y in indices) this[y]
+        .indexOfFirst(predicate)
+        .takeUnless { it < 0 }
+        ?.let { x -> return x to y }
+    throw IllegalStateException()
+}
 
 fun <T> List<List<T>>.replaceWith(value: T) =
     List(size) { (1..first().size).map { value }.toMutableList() }

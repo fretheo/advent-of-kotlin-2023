@@ -38,13 +38,12 @@ class Day(val input: Scanner) {
     }
 
     private fun List<MutableList<Char>>.clearAround(point: Pair<Int, Int>, direction: Direction) {
-        val (X, Y) = first().lastIndex to lastIndex // bounds
         var (x, y) = point
         when (direction) {
-            D -> while (x < X && this[y][x + 1] in " ext.getX") this[y][++x] = 'X'
-            U -> while (x > 0 && this[y][x - 1] in " ext.getX") this[y][--x] = 'X'
-            L -> while (y < Y && this[y + 1][x] in " ext.getX") this[++y][x] = 'X'
-            R -> while (y > 0 && this[y - 1][x] in " ext.getX") this[--y][x] = 'X'
+            D -> while (x < X && this[y][x + 1] in " X") this[y][++x] = 'X'
+            U -> while (x > 0 && this[y][x - 1] in " X") this[y][--x] = 'X'
+            L -> while (y < Y && this[y + 1][x] in " X") this[++y][x] = 'X'
+            R -> while (y > 0 && this[y - 1][x] in " X") this[--y][x] = 'X'
         }
     }
 }
@@ -56,8 +55,7 @@ class Day(val input: Scanner) {
 private fun parseInputs(input: Scanner): Triple<List<MutableList<Char>>, Pair<Int, Int>, Direction> {
     val grid = input.asList().map { it.toMutableList() }
 
-    val y = grid.indexOfFirst { 'S' in it }
-    val x = grid[y].indexOfFirst { it == 'S' }
+    val (x, y) = grid.positionOfFirst { it == 'S' }
     grid[x, y] = grid.decodeSymbolAt(x, y)
 
     val direction = when (grid[x, y]) {
@@ -70,7 +68,6 @@ private fun parseInputs(input: Scanner): Triple<List<MutableList<Char>>, Pair<In
 }
 
 private fun List<List<Char>>.decodeSymbolAt(x: Int, y: Int): Char {
-    val (X, Y) = first().lastIndex to lastIndex // bounds
     var candidates = "LF7J-|".toSet()
     if (x < X && this[y][x + 1] in "7J-") candidates = candidates intersect "LF-".toSet()
     if (x > 0 && this[y][x - 1] in "LF-") candidates = candidates intersect "7J-".toSet()
