@@ -1,6 +1,6 @@
 package day06
 
-import asList
+import ext.asList
 import java.util.Scanner
 
 class Day(val input: Scanner) {

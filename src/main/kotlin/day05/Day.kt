@@ -1,7 +1,7 @@
 package day05
 
 import java.util.Scanner
-import lines
+import ext.lines
 
 class Day(val input: Scanner) {
     fun starOne() = input.parseSeeder()

@@ -1,7 +1,7 @@
 package day01
 
 import java.util.Scanner
-import lines
+import ext.lines
 
 class Day(val input: Scanner) {
     fun starOne() = inputNums(named = false).sum().also(::println)

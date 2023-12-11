@@ -1,7 +1,7 @@
 package day02
 
 import java.util.Scanner
-import lines
+import ext.lines
 
 private val colors = listOf("red", "green", "blue")
 

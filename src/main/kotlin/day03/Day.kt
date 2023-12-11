@@ -1,7 +1,7 @@
 package day03
 
 import java.util.Scanner
-import lines
+import ext.lines
 
 private data class LocatedNumber(
     val row: Int,

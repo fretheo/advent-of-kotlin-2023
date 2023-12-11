@@ -1,19 +1,8 @@
 package day11
 
-import X
-import Y
-import allInColumn
-import allInRow
-import get
-import asList
-import collectPairs
-import gridIndices
-import x
-import y
+import ext.*
 import java.util.Scanner
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.*
 
 class Day(val input: Scanner) {
     fun starOne() = measureDistances(factor = 1L)
@@ -22,8 +11,8 @@ class Day(val input: Scanner) {
     private fun measureDistances(factor: Long): Long {
         val grid = input.asList().map { it.toList() }
 
-        val cols = (0..grid.X).filter { grid.allInColumn(it, '.'::equals) }
-        val rows = (0..grid.Y).filter { grid.allInRow(it, '.'::equals) }
+        val cols = grid.xIndices.filter { grid.allInCol(it, '.'::equals) }
+        val rows = grid.yIndices.filter { grid.allInRow(it, '.'::equals) }
 
         return grid.gridIndices
             .filter { (x, y) -> grid[x, y] == '#' }

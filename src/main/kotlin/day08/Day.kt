@@ -1,7 +1,7 @@
 package day08
 
 import java.util.Scanner
-import lines
+import ext.lines
 
 private typealias Network = Map<String, NetworkNode>
 

@@ -1,7 +1,9 @@
+package ext
+
 import java.util.Scanner
 
 // ------------------------------------------------------------------------------------------------
-// Parser
+// Parsing
 // ------------------------------------------------------------------------------------------------
 
 fun Scanner.lines() = sequence {
@@ -15,6 +17,7 @@ fun Scanner.asList() = lines().toList()
 // ------------------------------------------------------------------------------------------------
 
 typealias Point = Pair<Int, Int>
+
 val Point.x get() = first
 val Point.y get() = second
 
@@ -22,6 +25,9 @@ operator fun List<List<Char>>.get(x: Int, y: Int) = this[y][x]
 operator fun List<MutableList<Char>>.set(x: Int, y: Int, value: Char) {
     this[y][x] = value
 }
+
+val <T> List<List<T>>.xIndices get() = require(isNotEmpty()).let { first().indices }
+val <T> List<List<T>>.yIndices get() = require(isNotEmpty()).let { indices }
 
 inline fun <T> List<List<T>>.gridForEach(action: (x: Int, y: Int, T) -> Unit) {
     for (y in this.indices)
@@ -39,22 +45,20 @@ inline fun <T, R> List<List<T>>.gridFold(initial: R, operation: (acc: R, x: Int,
 
 val <T> List<List<T>>.gridIndices: List<Pair<Int, Int>>
     get() = this.indices.flatMap { y ->
-        this[y].indices.map { x ->
-            x to y
-        }
+        this[y].indices.map { x -> x to y }
     }
 
-val <T> List<List<T>>.X get() = require(isNotEmpty()).let { first().lastIndex }
-val <T> List<List<T>>.Y get() = require(isNotEmpty()).let { lastIndex }
+fun <T> List<List<T>>.replaceWith(value: T) =
+    List(size) { (1..first().size).map { value }.toMutableList() }
 
 inline fun <T> List<List<T>>.allInRow(index: Int, predicate: (T) -> Boolean): Boolean =
     index in indices && get(index).all(predicate)
 
-inline fun <T> List<List<T>>.allInColumn(columnIndex: Int, predicate: (T) -> Boolean): Boolean =
+inline fun <T> List<List<T>>.allInCol(columnIndex: Int, predicate: (T) -> Boolean): Boolean =
     isNotEmpty() && columnIndex in first().indices && all { row -> predicate(row[columnIndex]) }
 
 // ------------------------------------------------------------------------------------------------
-// Grids
+// Lists
 // ------------------------------------------------------------------------------------------------
 
 fun <T> List<T>.collectPairs(predicate: (Pair<T, T>) -> Boolean): Set<Pair<T, T>> {
@@ -66,3 +70,21 @@ fun <T> List<T>.collectPairs(predicate: (Pair<T, T>) -> Boolean): Set<Pair<T, T>
                 ?.let(pairs::add)
     return pairs
 }
+
+// ------------------------------------------------------------------------------------------------
+// Lists
+// ------------------------------------------------------------------------------------------------
+
+fun beautify(c: Char) = when (c) {
+    'F'  -> '╔'
+    '7'  -> '╗'
+    'L'  -> '╚'
+    'J'  -> '╝'
+    '|'  -> '║'
+    '-'  -> '═'
+    else -> c
+}
+
+fun beautify(grid: List<List<Char>>): String = grid
+    .map { it.map(::beautify) }
+    .joinToString("\n") { it.joinToString("") }

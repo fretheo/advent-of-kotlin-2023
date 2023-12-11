@@ -1,11 +1,8 @@
 package day10
 
-import asList
-import day10.Direction.D
-import day10.Direction.L
-import day10.Direction.R
-import day10.Direction.U
+import day10.Direction.*
 import java.util.Scanner
+import ext.*
 
 class Day(val input: Scanner) {
     fun starOne(): Int {
@@ -21,7 +18,7 @@ class Day(val input: Scanner) {
             .let { (grid, point, direction) ->
                 PipeVisitor(grid)
                     .apply { traverse(point, direction) }
-                    .visited.fold(grid.emptied()) { acc, (x, y) ->
+                    .visited.fold(grid.replaceWith(' ')) { acc, (x, y) ->
                         acc.apply { set(x, y, grid[x, y]) }
                     }
             }
@@ -44,10 +41,10 @@ class Day(val input: Scanner) {
         val (X, Y) = first().lastIndex to lastIndex // bounds
         var (x, y) = point
         when (direction) {
-            D -> while (x < X && this[y][x + 1] in " X") this[y][++x] = 'X'
-            U -> while (x > 0 && this[y][x - 1] in " X") this[y][--x] = 'X'
-            L -> while (y < Y && this[y + 1][x] in " X") this[++y][x] = 'X'
-            R -> while (y > 0 && this[y - 1][x] in " X") this[--y][x] = 'X'
+            D -> while (x < X && this[y][x + 1] in " ext.getX") this[y][++x] = 'X'
+            U -> while (x > 0 && this[y][x - 1] in " ext.getX") this[y][--x] = 'X'
+            L -> while (y < Y && this[y + 1][x] in " ext.getX") this[++y][x] = 'X'
+            R -> while (y > 0 && this[y - 1][x] in " ext.getX") this[--y][x] = 'X'
         }
     }
 }
@@ -132,17 +129,4 @@ private class PipeVisitor<T : List<List<Char>>>(private val grid: T) {
 // Helpers - Misc: types and extensions
 // ------------------------------------------------------------------------------------------------
 
-private enum class Direction {
-    U, D, L, R
-}
-
-private typealias Point = Pair<Int, Int>
-
-private operator fun List<List<Char>>.get(x: Int, y: Int) = this[y][x]
-private operator fun List<MutableList<Char>>.set(x: Int, y: Int, value: Char) {
-    this[y][x] = value
-}
-
-private fun List<List<Char>>.emptied() =
-    List(size) { (1..first().size).map { ' ' }.toMutableList() }
-
+private enum class Direction { U, D, L, R }
