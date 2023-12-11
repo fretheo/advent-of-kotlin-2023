@@ -8,14 +8,12 @@ class Day(val input: Scanner) {
     fun starOne() = measureDistances(factor = 1L)
     fun starTwo() = measureDistances(factor = 999_999L)
 
-    private fun measureDistances(factor: Long): Long {
-        val grid = input.asList().map { it.toList() }
+    private fun measureDistances(factor: Long): Long = input.asGrid().run {
+        val cols = xIndices.filter { allInCol(it, '.'::equals) }
+        val rows = yIndices.filter { allInRow(it, '.'::equals) }
 
-        val cols = grid.xIndices.filter { grid.allInCol(it, '.'::equals) }
-        val rows = grid.yIndices.filter { grid.allInRow(it, '.'::equals) }
-
-        return grid.gridIndices
-            .filter { (x, y) -> grid[x, y] == '#' }
+        gridIndices
+            .filter { (x, y) -> this[x, y] == '#' }
             .collectPairs { it.first != it.second }
             .sumOf { (a, b) ->
                 val xCount = cols.count { it in min(a.x, b.x)..max(a.x, b.x) }

@@ -11,6 +11,7 @@ fun Scanner.lines() = sequence {
 }
 
 fun Scanner.asList() = lines().toList()
+fun Scanner.asGrid() = asList().map { it.toList() }
 
 // ------------------------------------------------------------------------------------------------
 // Grids
