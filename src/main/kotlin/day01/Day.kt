@@ -4,14 +4,12 @@ import java.util.Scanner
 import ext.lines
 
 class Day(val input: Scanner) {
-    fun starOne() = inputNums(named = false).sum().also(::println)
-    fun starTwo() = inputNums(named = true).sum().also(::println)
+    fun starOne() = inputNums(named = false).sum()
+    fun starTwo() = inputNums(named = true).sum()
 
-    private fun inputNums(named: Boolean) = input.lines().map { line ->
-        (if (named) line.augmented() else line)
-            .run { get(indexOfFirst(Char::isDigit)) to get(indexOfLast(Char::isDigit)) }
-            .let { (a, b) -> "$a$b".toInt() }
-    }
+    private fun inputNums(named: Boolean) = input.lines()
+        .map { it.takeUnless { named } ?: it.augmented() }
+        .map { "${it.first(Char::isDigit)}${it.last(Char::isDigit)}".toInt() }
 
     private fun String.augmented() =
         listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
