@@ -39,11 +39,17 @@ inline fun <T> List<List<T>>.gridForEach(action: (x: Int, y: Int, T) -> Unit) {
             action(x, y, this[y][x])
 }
 
-inline fun <T, R> List<List<T>>.gridFold(initial: R, operation: (acc: R, x: Int, y: Int, T) -> R): R {
+inline fun <T, R> List<List<T>>.foldColRow(initial: R, operation: (acc: R, x: Int, y: Int, T) -> R): R {
     var accumulator = initial
-    for (y in this.indices)
-        for (x in this[y].indices)
-            accumulator = operation(accumulator, x, y, this[y][x])
+    for (x in xIndices) for (y in yIndices)
+        accumulator = operation(accumulator, x, y, this[y][x])
+    return accumulator
+}
+
+inline fun <T, R> List<List<T>>.foldRowCol(initial: R, operation: (acc: R, x: Int, y: Int, T) -> R): R {
+    var accumulator = initial
+    for (y in yIndices) for (x in xIndices)
+        accumulator = operation(accumulator, x, y, this[y][x])
     return accumulator
 }
 
@@ -84,7 +90,7 @@ fun <T> List<T>.collectPairs(predicate: (Pair<T, T>) -> Boolean): Set<Pair<T, T>
 }
 
 // ------------------------------------------------------------------------------------------------
-// Lists
+// Misc
 // ------------------------------------------------------------------------------------------------
 
 fun beautify(c: Char) = when (c) {

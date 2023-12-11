@@ -5,47 +5,23 @@ import java.util.Scanner
 import ext.*
 
 class Day(val input: Scanner) {
-    fun starOne(): Int {
-        val (grid, point, direction) = parseInputs(input)
-
-        var counter = 0
-        PipeVisitor(grid).traverse(point, direction) { _, _ -> counter++ }
-        return counter / 2
-    }
-
-    fun starTwo(): Int {
-        val loop = parseInputs(input)
-            .let { (grid, point, direction) ->
-                PipeVisitor(grid)
-                    .apply { traverse(point, direction) }
-                    .visited.fold(grid.replaceWith(' ')) { acc, (x, y) ->
-                        acc.apply { set(x, y, grid[x, y]) }
-                    }
-            }
-
-        val y = loop.indexOfFirst { !it.all(' '::equals) }
-        val x = loop[y].indexOfFirst { it != ' ' }
-        var prevDirection = D
-        PipeVisitor(loop).traverse(x to y, prevDirection) { point, direction ->
-            loop.clearAround(point, prevDirection)
-            if (prevDirection != direction)
-                loop.clearAround(point, direction)
-
-            prevDirection = direction
+    fun starOne() = parseInputs(input)
+        .let { (grid, point, direction) ->
+            PipeVisitor(grid)
+                .apply { traverse(point, direction) }
+                .visited.count() / 2
         }
 
-        return loop.sumOf { it.count('X'::equals) }
-    }
-
-    private fun List<MutableList<Char>>.clearAround(point: Pair<Int, Int>, direction: Direction) {
-        var (x, y) = point
-        when (direction) {
-            D -> while (x < X && this[y][x + 1] in " X") this[y][++x] = 'X'
-            U -> while (x > 0 && this[y][x - 1] in " X") this[y][--x] = 'X'
-            L -> while (y < Y && this[y + 1][x] in " X") this[++y][x] = 'X'
-            R -> while (y > 0 && this[y - 1][x] in " X") this[--y][x] = 'X'
+    fun starTwo() = parseInputs(input)
+        .let { (grid, point, direction) ->
+            PipeVisitor(grid)
+                .apply { traverse(point, direction) }
+                .visited.fold(grid.replaceWith(' ')) { acc, (x, y) ->
+                    acc.apply { set(x, y, grid[x, y]) }
+                }
         }
-    }
+        .apply { forEveryInternalSpace { (x, y) -> this[x, y] = 'X' } }
+        .sumOf { it.count('X'::equals) }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -119,6 +95,25 @@ private class PipeVisitor<T : List<List<Char>>>(private val grid: T) {
         val (nextPoint, nextOrientation) = go(x, y, direction) ?: return
 
         traverse(nextPoint, nextOrientation, onVisit)
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+// Helpers - Process of crossings
+// ------------------------------------------------------------------------------------------------
+
+private fun List<List<Char>>.forEveryInternalSpace(action: (Point) -> Unit) {
+    foldRowCol(Triple(false, false, null as Direction?)) { ctx, x, y, c ->
+        val (crossing, inside, direction) = ctx
+        when {
+            c == ' ' && inside    -> ctx.also { action(x to y) }
+            c == 'L' && !crossing -> Triple(true, inside, U)
+            c == 'F' && !crossing -> Triple(true, inside, D)
+            c == '7' && crossing  -> Triple(false, if (direction == U) !inside else inside, direction)
+            c == 'J' && crossing  -> Triple(false, if (direction == D) !inside else inside, direction)
+            c == '|'              -> Triple(crossing, !inside, direction)
+            else                  -> ctx
+        }
     }
 }
 
