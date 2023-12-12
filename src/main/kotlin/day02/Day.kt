@@ -3,26 +3,17 @@ package day02
 import java.util.Scanner
 import ext.lines
 
-private val colors = listOf("red", "green", "blue")
-
 class Day(val input: Scanner) {
     fun starOne(): Int = input.lines()
-        .sumOf { line ->
-            colors.withIndex()
-                .all { line.maxByColor(it.value) <= arrayOf(12, 13, 14)[it.index] }
-                .let { valid -> if (valid) id(line) else 0 }
-        }
+        .filter { line -> line.maxByColors().mapIndexed { idx, it -> 12 + idx - it }.all { it >= 0 } }
+        .sumOf { line -> line.drop(5).takeWhile { it != ':' }.toInt() }
 
     fun starTwo(): Int = input.lines()
-        .sumOf { line ->
-            colors
-                .map(line::maxByColor)
-                .reduce(Int::times)
-        }
+        .sumOf { it.maxByColors().reduce(Int::times) }
 }
 
-private fun id(line: String) = line.drop(5).takeWhile { it != ':' }.toInt()
-private fun String.maxByColor(color: String) = Regex("""(\d+) $color""")
-    .findAll(this)
-    .map { it.groupValues.last().toInt() }
-    .maxOrNull() ?: 0
+private val colors = listOf("red", "green", "blue")
+private fun String.maxByColors() = colors.map { color ->
+    Regex("""(\d+) $color""").findAll(this)
+        .maxOfOrNull { it.groupValues.last().toInt() } ?: 0
+}
