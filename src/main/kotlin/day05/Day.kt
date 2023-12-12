@@ -6,11 +6,9 @@ import ext.lines
 class Day(val input: Scanner) {
     fun starOne() = input.parseSeeder()
         .run { findBestLocation(starOneSeedRanges) }
-        .also(::println)
 
     fun starTwo() = input.parseSeeder()
         .run { findBestLocation(starTwoSeedRanges) }
-        .also(::println)
 }
 
 // ------------------------------------------------------------------------------------------------

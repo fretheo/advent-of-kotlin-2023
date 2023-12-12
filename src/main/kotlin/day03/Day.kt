@@ -31,7 +31,6 @@ class Day(val input: Scanner) {
             symbolPoints.any { point -> point.isNear(it) }
         }
         .sumOf(LocatedNumber::value)
-        .also(::println)
 
     fun starTwo() = gearPoints
         .map {
@@ -39,7 +38,6 @@ class Day(val input: Scanner) {
         }
         .filter { it.size == 2 }
         .sumOf { it.reduce(Int::times) }
-        .also(::println)
 
     // ------------------------------------------------------------------------------------------------
     // Helpers
