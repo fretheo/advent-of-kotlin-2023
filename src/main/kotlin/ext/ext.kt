@@ -12,12 +12,15 @@ fun Scanner.lines() = sequence {
 
 fun Scanner.asList() = lines().toList()
 fun Scanner.asGrid() = asList().map { it.toList() }
+fun List<String>.asGrid() = map { it.toList() }
+fun Sequence<String>.asGrid() = toList().asGrid()
 
 // ------------------------------------------------------------------------------------------------
 // Grids
 // ------------------------------------------------------------------------------------------------
 
 typealias Point = Pair<Int, Int>
+typealias Grid<T> = List<List<T>>
 
 val Point.x get() = first
 val Point.y get() = second
@@ -27,38 +30,38 @@ operator fun List<MutableList<Char>>.set(x: Int, y: Int, value: Char) {
     this[y][x] = value
 }
 
-val <T> List<List<T>>.xIndices get() = require(isNotEmpty()).let { first().indices }
-val <T> List<List<T>>.yIndices get() = require(isNotEmpty()).let { indices }
+val <T> Grid<T>.xIndices get() = require(isNotEmpty()).let { first().indices }
+val <T> Grid<T>.yIndices get() = require(isNotEmpty()).let { indices }
 
-val <T> List<List<T>>.X get() = xIndices.last
-val <T> List<List<T>>.Y get() = yIndices.last
+val <T> Grid<T>.X get() = xIndices.last
+val <T> Grid<T>.Y get() = yIndices.last
 
-inline fun <T> List<List<T>>.gridForEach(action: (x: Int, y: Int, T) -> Unit) {
+inline fun <T> Grid<T>.gridForEach(action: (x: Int, y: Int, T) -> Unit) {
     for (y in this.indices)
         for (x in this[y].indices)
             action(x, y, this[y][x])
 }
 
-inline fun <T, R> List<List<T>>.foldColRow(initial: R, operation: (acc: R, x: Int, y: Int, T) -> R): R {
+inline fun <T, R> Grid<T>.foldColRow(initial: R, operation: (acc: R, x: Int, y: Int, T) -> R): R {
     var accumulator = initial
     for (x in xIndices) for (y in yIndices)
         accumulator = operation(accumulator, x, y, this[y][x])
     return accumulator
 }
 
-inline fun <T, R> List<List<T>>.foldRowCol(initial: R, operation: (acc: R, x: Int, y: Int, T) -> R): R {
+inline fun <T, R> Grid<T>.foldRowCol(initial: R, operation: (acc: R, x: Int, y: Int, T) -> R): R {
     var accumulator = initial
     for (y in yIndices) for (x in xIndices)
         accumulator = operation(accumulator, x, y, this[y][x])
     return accumulator
 }
 
-val <T> List<List<T>>.gridIndices: List<Pair<Int, Int>>
+val <T> Grid<T>.gridIndices: List<Pair<Int, Int>>
     get() = this.indices.flatMap { y ->
         this[y].indices.map { x -> x to y }
     }
 
-fun <T> List<List<T>>.positionOfFirst(predicate: (T) -> Boolean): Pair<Int, Int> {
+fun <T> Grid<T>.positionOfFirst(predicate: (T) -> Boolean): Pair<Int, Int> {
     for (y in indices) this[y]
         .indexOfFirst(predicate)
         .takeUnless { it < 0 }
@@ -66,14 +69,17 @@ fun <T> List<List<T>>.positionOfFirst(predicate: (T) -> Boolean): Pair<Int, Int>
     throw IllegalStateException()
 }
 
-fun <T> List<List<T>>.replaceWith(value: T) =
+fun <T> Grid<T>.replaceWith(value: T) =
     List(size) { (1..first().size).map { value }.toMutableList() }
 
-inline fun <T> List<List<T>>.allInRow(index: Int, predicate: (T) -> Boolean): Boolean =
+inline fun <T> Grid<T>.allInRow(index: Int, predicate: (T) -> Boolean): Boolean =
     index in indices && get(index).all(predicate)
 
-inline fun <T> List<List<T>>.allInCol(columnIndex: Int, predicate: (T) -> Boolean): Boolean =
+inline fun <T> Grid<T>.allInCol(columnIndex: Int, predicate: (T) -> Boolean): Boolean =
     isNotEmpty() && columnIndex in first().indices && all { row -> predicate(row[columnIndex]) }
+
+fun <T> Grid<T>.transposed(): Grid<T> =
+    List(X + 1) { x -> List(Y + 1) { y -> this[y][x] } }
 
 // ------------------------------------------------------------------------------------------------
 // Lists
@@ -103,6 +109,9 @@ fun beautify(c: Char) = when (c) {
     else -> c
 }
 
-fun beautify(grid: List<List<Char>>): String = grid
+fun beautify(grid: Grid<Char>): String = grid
     .map { it.map(::beautify) }
     .joinToString("\n") { it.joinToString("") }
+
+fun Grid<Char>.printGrid() =
+    joinToString("\n") { it.joinToString("") }.let(::println)
