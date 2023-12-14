@@ -14,6 +14,7 @@ fun Scanner.asList() = lines().toList()
 fun Scanner.asGrid() = asList().map { it.toList() }
 fun List<String>.asGrid() = map { it.toList() }
 fun Sequence<String>.asGrid() = toList().asGrid()
+fun Sequence<String>.asMutableGrid() = toList().map { it.toMutableList() }
 
 // ------------------------------------------------------------------------------------------------
 // Grids
@@ -21,6 +22,7 @@ fun Sequence<String>.asGrid() = toList().asGrid()
 
 typealias Point = Pair<Int, Int>
 typealias Grid<T> = List<List<T>>
+typealias MutableGrid<T> = List<MutableList<T>>
 
 val Point.x get() = first
 val Point.y get() = second
@@ -114,4 +116,4 @@ fun beautify(grid: Grid<Char>): String = grid
     .joinToString("\n") { it.joinToString("") }
 
 fun Grid<Char>.printGrid() =
-    joinToString("\n") { it.joinToString("") }.let(::println)
+    joinToString("\n") { it.joinToString("", postfix = "\n") }.let(::println)
