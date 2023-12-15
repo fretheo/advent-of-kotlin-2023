@@ -3,7 +3,7 @@ package day14
 import ext.*
 import java.util.Scanner
 
-const val N = 1_000_000_000
+private const val N = 1_000_000_000
 
 class Day(val input: Scanner) {
     fun starOne() = input.lines().asMutableGrid()
