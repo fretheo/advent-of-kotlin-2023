@@ -1,6 +1,6 @@
 package day16
 
-import day16.Direction.*
+import ext.Direction.*
 import ext.*
 import java.util.Scanner
 
@@ -68,5 +68,3 @@ private class Reflector(private val G: Grid<Char>) {
         }
     }
 }
-
-private enum class Direction { U, D, L, R }

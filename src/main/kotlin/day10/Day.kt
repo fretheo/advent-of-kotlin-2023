@@ -1,6 +1,6 @@
 package day10
 
-import day10.Direction.*
+import ext.Direction.*
 import java.util.Scanner
 import ext.*
 
@@ -116,9 +116,3 @@ private fun List<List<Char>>.forEveryInternalSpace(action: (Point) -> Unit) {
         }
     }
 }
-
-// ------------------------------------------------------------------------------------------------
-// Helpers - Misc: types and extensions
-// ------------------------------------------------------------------------------------------------
-
-private enum class Direction { U, D, L, R }
