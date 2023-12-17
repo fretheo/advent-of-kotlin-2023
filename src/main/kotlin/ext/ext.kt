@@ -12,6 +12,7 @@ fun Scanner.lines() = sequence {
 
 fun Scanner.asList() = lines().toList()
 fun Scanner.asGrid() = asList().map { it.toList() }
+fun <T> Scanner.asGridOf(transform: (Char) -> T) = asList().map { it.map(transform) }
 fun List<String>.asGrid() = map { it.toList() }
 fun Sequence<String>.asGrid() = toList().asGrid()
 fun Sequence<String>.asMutableGrid() = toList().map { it.toMutableList() }
@@ -117,3 +118,5 @@ fun beautify(grid: Grid<Char>): String = grid
 
 fun Grid<Char>.printGrid() =
     joinToString("\n") { it.joinToString("", postfix = "\n") }.let(::println)
+
+enum class Direction { U, L, D, R }
