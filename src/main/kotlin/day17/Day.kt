@@ -47,7 +47,7 @@ private class HeatCalculator(val grid: Grid<Int>, val steps: IntRange) {
         .map { s -> (x to y).at(s, direction) }
         .filter { it.x in xIndices && it.y in yIndices }
 
-    private fun Point.at(distance: Int, direction: Direction) = when (direction) {
+    private fun IntPoint.at(distance: Int, direction: Direction) = when (direction) {
         U -> x to y - distance
         L -> x - distance to y
         D -> x to y + distance

@@ -1,5 +1,6 @@
 package day10
 
+import ext.IntPoint as Point
 import ext.Direction.*
 import java.util.Scanner
 import ext.*
