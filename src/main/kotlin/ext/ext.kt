@@ -21,12 +21,15 @@ fun Sequence<String>.asMutableGrid() = toList().map { it.toMutableList() }
 // Grids
 // ------------------------------------------------------------------------------------------------
 
-typealias Point = Pair<Int, Int>
+typealias IntPoint = Pair<Int, Int>
+typealias LongPoint = Pair<Long, Long>
 typealias Grid<T> = List<List<T>>
 typealias MutableGrid<T> = List<MutableList<T>>
 
-val Point.x get() = first
-val Point.y get() = second
+val IntPoint.x get() = first
+val IntPoint.y get() = second
+val LongPoint.x get() = first
+val LongPoint.y get() = second
 
 operator fun <T> List<List<T>>.get(x: Int, y: Int) = this[y][x]
 operator fun <T> List<MutableList<T>>.set(x: Int, y: Int, value: T) {
