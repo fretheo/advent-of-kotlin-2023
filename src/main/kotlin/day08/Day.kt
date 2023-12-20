@@ -1,5 +1,6 @@
 package day08
 
+import ext.lcm
 import java.util.Scanner
 import ext.lines
 
@@ -34,11 +35,8 @@ class Day(val input: Scanner) {
             }
         }
 
-        // calculating LCM
-        .reduce { a, b -> a / gcd(a, b) * b }
-
-    private tailrec fun gcd(a: Long, b: Long): Long =
-        if (b == 0L) a else gcd(b, a % b)
+        // calculating LCM - minimal needed steps
+        .reduce(::lcm)
 
     // ------------------------------------------------------------------------------------------------
     // Helpers - Counting
