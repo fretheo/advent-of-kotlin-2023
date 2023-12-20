@@ -113,8 +113,8 @@ private class Broadcaster(override val dst: List<String>) : Module {
 }
 
 private class FlipFlop(override val id: String, override val dst: List<String>) : Module {
-
     private var enabled = false
+
     fun pipe(pulse: Pulse) = when (pulse) {
         High -> null
         Low  -> enabled.not()
@@ -124,8 +124,8 @@ private class FlipFlop(override val id: String, override val dst: List<String>) 
 }
 
 private class Conjunction(override val id: String, override val dst: List<String>) : Module {
-
     val sources = mutableMapOf<String, Pulse>()
+
     fun pipe(src: String, pulse: Pulse) = apply { sources[src] = pulse }
         .let { if (sources.values.all { it == High }) Low else High }
 }
